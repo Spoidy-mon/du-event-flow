@@ -10,52 +10,14 @@ import { FloatingActionButton } from "@/components/layout/FloatingActionButton";
 import { Button } from "@/components/ui/button";
 import { supabase } from "@/integrations/supabase/client";
 import diwaliMela from "@/assets/diwali-mela.jpg";
-import scienceWorkshop from "@/assets/science-workshop.jpg";
-import collegeTour from "@/assets/college-tour.jpg";
-
-const upcomingEvents = [
-  {
-    title: "Classical Music Night",
-    date: "Feb 6",
-    time: "7:00 PM",
-    venue: "North Campus Auditorium",
-    image: diwaliMela,
-    tags: ["Cultural", "Music"],
-    isFree: true,
-  },
-  {
-    title: "Entrepreneurship Workshop",
-    date: "Feb 8",
-    time: "10:00 AM",
-    venue: "Commerce Department",
-    image: scienceWorkshop,
-    tags: ["Workshop", "Career"],
-  },
-  {
-    title: "Annual Sports Fest",
-    date: "Feb 12",
-    time: "9:00 AM",
-    venue: "Sports Complex",
-    image: collegeTour,
-    tags: ["Sports", "Cultural"],
-    isSponsored: true,
-  },
-  {
-    title: "Tech Talk Series",
-    date: "Feb 15",
-    time: "3:00 PM",
-    venue: "CS Department",
-    image: scienceWorkshop,
-    tags: ["Seminar", "Tech"],
-  },
-];
 
 const Index = () => {
   const navigate = useNavigate();
   const [user, setUser] = useState<any>(null);
+  const [events, setEvents] = useState<any[]>([]);
+  const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    // Check auth status
     supabase.auth.getSession().then(({ data: { session } }) => {
       setUser(session?.user ?? null);
     });
@@ -66,6 +28,27 @@ const Index = () => {
 
     return () => subscription.unsubscribe();
   }, []);
+
+  useEffect(() => {
+    fetchEvents();
+  }, []);
+
+  const fetchEvents = async () => {
+    try {
+      const { data, error } = await supabase
+        .from("events")
+        .select("*")
+        .order("date", { ascending: true })
+        .limit(10);
+
+      if (error) throw error;
+      setEvents(data || []);
+    } catch (error) {
+      console.error("Error fetching events:", error);
+    } finally {
+      setLoading(false);
+    }
+  };
 
   return (
     <div className="min-h-screen bg-gradient-hero pb-20">
@@ -91,16 +74,43 @@ const Index = () => {
 
           <section>
             <div className="flex items-center justify-between mb-4">
-              <h2 className="text-xl font-bold">Happening This Week</h2>
-              <button className="text-sm text-primary font-medium hover:underline">
+              <h2 className="text-xl font-bold">Upcoming Events</h2>
+              <button 
+                onClick={() => navigate("/explore")}
+                className="text-sm text-primary font-medium hover:underline"
+              >
                 View All
               </button>
             </div>
-            <div className="flex gap-4 overflow-x-auto pb-2 scrollbar-hide">
-              {upcomingEvents.map((event, index) => (
-                <EventCard key={index} {...event} />
-              ))}
-            </div>
+            
+            {loading ? (
+              <div className="flex gap-4 overflow-x-auto pb-2">
+                {[1, 2, 3].map((i) => (
+                  <div key={i} className="min-w-[280px] h-[380px] rounded-2xl bg-muted animate-pulse" />
+                ))}
+              </div>
+            ) : events.length > 0 ? (
+              <div className="flex gap-4 overflow-x-auto pb-2 scrollbar-hide">
+                {events.map((event) => (
+                  <EventCard
+                    key={event.id}
+                    id={event.id}
+                    title={event.title}
+                    date={new Date(event.date).toLocaleDateString('en-US', { month: 'short', day: 'numeric' })}
+                    time={event.time}
+                    venue={event.venue}
+                    image={event.image_url || diwaliMela}
+                    tags={event.tags || []}
+                    isFree={event.is_free}
+                    isSponsored={event.is_sponsored}
+                  />
+                ))}
+              </div>
+            ) : (
+              <div className="text-center py-8 text-muted-foreground">
+                <p>No events available yet. Check back soon!</p>
+              </div>
+            )}
           </section>
 
           <CategoryGrid />

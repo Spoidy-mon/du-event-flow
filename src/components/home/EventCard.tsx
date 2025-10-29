@@ -1,9 +1,11 @@
 import { Calendar, MapPin, Tag } from "lucide-react";
+import { useNavigate } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { cn } from "@/lib/utils";
 
 interface EventCardProps {
+  id?: string;
   title: string;
   date: string;
   time: string;
@@ -15,6 +17,7 @@ interface EventCardProps {
 }
 
 export const EventCard = ({
+  id,
   title,
   date,
   time,
@@ -24,8 +27,13 @@ export const EventCard = ({
   isFree = false,
   isSponsored = false,
 }: EventCardProps) => {
+  const navigate = useNavigate();
+
   return (
-    <div className="group min-w-[280px] max-w-[280px] rounded-2xl overflow-hidden shadow-card hover:shadow-elegant transition-smooth hover:-translate-y-2 bg-card">
+    <div 
+      className="group min-w-[280px] max-w-[280px] rounded-2xl overflow-hidden shadow-card hover:shadow-elegant transition-smooth hover:-translate-y-2 bg-card cursor-pointer"
+      onClick={() => id && navigate(`/events/${id}`)}
+    >
       <div className="relative h-40 overflow-hidden">
         <img
           src={image}
@@ -69,8 +77,14 @@ export const EventCard = ({
           </div>
         )}
 
-        <Button className="w-full gradient-primary text-white hover:opacity-90">
-          Book Now
+        <Button 
+          className="w-full gradient-primary text-white hover:opacity-90"
+          onClick={(e) => {
+            e.stopPropagation();
+            id && navigate(`/events/${id}`);
+          }}
+        >
+          View Details
         </Button>
       </div>
     </div>
