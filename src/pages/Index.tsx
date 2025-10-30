@@ -51,18 +51,16 @@ const Index = () => {
   };
 
   return (
-    <div className="min-h-screen bg-gradient-hero pb-20">
+    <div className="min-h-screen bg-background pb-20">
       {/* Auth Banner */}
       {!user && (
-        <div className="glass border-b border-border/40 sticky top-0 z-40">
-          <div className="max-w-lg mx-auto px-4 py-3 flex items-center justify-between">
-            <p className="text-sm text-muted-foreground">
-              Join DU Events Hub
-            </p>
-            <Button size="sm" onClick={() => navigate("/auth")} className="gradient-primary">
-              Login / Sign Up
+        <div className="bg-gradient-primary/10 border-b border-primary/20 p-3 text-center">
+          <p className="text-sm text-foreground">
+            <Button variant="link" onClick={() => navigate("/auth")} className="text-primary font-bold p-0 h-auto hover:no-underline">
+              Sign in
             </Button>
-          </div>
+            {" "}to book events and unlock exclusive features
+          </p>
         </div>
       )}
       
@@ -74,19 +72,22 @@ const Index = () => {
 
           <section>
             <div className="flex items-center justify-between mb-4">
-              <h2 className="text-xl font-bold">Upcoming Events</h2>
+              <div>
+                <h2 className="text-2xl font-bold text-foreground">Upcoming Events</h2>
+                <p className="text-sm text-muted-foreground mt-1">Discover what's happening at DU</p>
+              </div>
               <button 
                 onClick={() => navigate("/explore")}
-                className="text-sm text-primary font-medium hover:underline"
+                className="text-sm text-primary font-semibold hover:underline"
               >
-                View All
+                See All
               </button>
             </div>
             
             {loading ? (
               <div className="flex gap-4 overflow-x-auto pb-2">
                 {[1, 2, 3].map((i) => (
-                  <div key={i} className="min-w-[280px] h-[380px] rounded-2xl bg-muted animate-pulse" />
+                  <div key={i} className="min-w-[280px] h-[420px] rounded-3xl bg-gradient-card animate-pulse border border-border/30" />
                 ))}
               </div>
             ) : events.length > 0 ? (
@@ -107,8 +108,8 @@ const Index = () => {
                 ))}
               </div>
             ) : (
-              <div className="text-center py-8 text-muted-foreground">
-                <p>No events available yet. Check back soon!</p>
+              <div className="text-center py-12 bg-gradient-card rounded-3xl border border-border/30">
+                <p className="text-muted-foreground">No events available yet. Check back soon!</p>
               </div>
             )}
           </section>
@@ -117,7 +118,7 @@ const Index = () => {
 
           <SponsorshipSection />
 
-          <div className="handwritten text-center text-primary/60 text-sm py-4">
+          <div className="handwritten text-center text-primary/40 text-sm py-4">
             <p>Wk 05 | Day 032-333</p>
             <p className="mt-2">Designed in India 🇮🇳</p>
           </div>

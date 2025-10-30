@@ -25,19 +25,22 @@ export const BottomNav = () => {
               key={item.path}
               to={item.path}
               className={cn(
-                "flex flex-col items-center justify-center gap-1 px-4 py-2 rounded-xl transition-smooth",
+                "flex flex-col items-center justify-center gap-1 px-4 py-2 rounded-xl transition-smooth relative",
                 "hover:bg-primary/10 active:scale-95",
                 isActive && "text-primary"
               )}
             >
+              {isActive && (
+                <div className="absolute -top-0.5 left-1/2 -translate-x-1/2 w-12 h-1 bg-gradient-primary rounded-full" />
+              )}
               <Icon 
                 className={cn(
-                  "h-5 w-5 transition-smooth",
-                  isActive && "shadow-glow"
+                  "h-6 w-6 transition-smooth",
+                  isActive && "drop-shadow-[0_0_8px_hsl(var(--primary))]"
                 )} 
               />
               <span className={cn(
-                "text-xs font-medium",
+                "text-[10px] font-medium",
                 isActive ? "text-primary" : "text-muted-foreground"
               )}>
                 {item.label}
